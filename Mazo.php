@@ -31,7 +31,9 @@ class Palo {
     public function __construct( $nombre ){
        $this->nombre = $nombre ; 
     }
-
+    public function getPalo(){
+        return $this->nombre;
+    }
     public function __toString(){
         return $this->nombre ;
     }
@@ -40,7 +42,7 @@ class Palo {
 class Carta {
 
     public function __construct(Palo $palo, $numero){
-        $this->palo = $palo;
+        $this->Palo = $palo;
         $this->numero = $numero;
     }
 
@@ -49,11 +51,11 @@ class Carta {
     }
 
     public function esPalo( Palo $palo){
-        return $this->palo === $palo;
+        return $this->Palo === $palo;
     }
 
     public function getPalo(){
-        return $this->palo;
+        return $this->Palo;
     }
 
     public function getNumero(){

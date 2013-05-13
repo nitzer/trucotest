@@ -4,6 +4,36 @@ require 'Jugador.php';
 require 'Mesa.php';
 require 'Partida.php';
 
+trait Events{
+    protected $Event = array();
+    public function setEvent($event,$val){
+        $this->Event = array('name'=>$event,'context'=>$val);
+        return $this->setSession($event,$val);
+    }
+
+    public function getEvent(){
+        return $this->Event;
+    }
+}
+
+trait Debug {
+    public function debug($message){
+        echo '<pre>';
+        var_dump($message);
+        echo '</pre>';
+    }
+}
+
+trait Entity {
+    private $uuid;
+    public function setUuid($uuid){
+        $this->uuid = $uuidu;
+    }
+
+    public function getUuid(){
+        return $this->uuid;
+    }
+}
 
 trait Session{
     public function initSession(){
@@ -20,12 +50,11 @@ trait Session{
 }
 
 class Truco {
-
     use Session;
+    use Events;
 
     private $Mazo = false;
     private $Jugadores = false;
-
     private $Palos = [
         'Bastos',
         'Espadas',
@@ -35,12 +64,14 @@ class Truco {
 
     const CANTIDAD_CARTAS_POR_PALO = 12;
 
-    public function __construct(){
-        $this->initSession();
+    public function run(){
         $this->recoverState();
         $this->initJugadores();
         $this->initMazo();
         $this->initPartida();
+    }
+    public function __construct(){
+        $this->initSession();
     }
 
     public function recoverState(){
@@ -68,10 +99,13 @@ class Truco {
 
     public function initJugadores(){
         if (!$this->Jugadores){
+            // hardcoded very villanger
             $Hernando = new Jugador('Hernando');
             $Enemigo = new Jugador('Enemigo');
-            $Jugadores = new Jugadores($Hernando, $Enemigo);
-            $this->Jugadores = $Jugadores;
+            $Jugadores = new Jugadores();
+            $Jugadores->agregarJugador($Hernando);
+            $Jugadores->agregarJugador($Enemigo);
+            $this->Jugadores = &$Jugadores;
             $this->setSession('Jugadores', $Jugadores);
         }
     }
@@ -90,16 +124,16 @@ class Truco {
             }
             $this->setSession('Mazo', $this->Mazo);
         }
-
-        #$this->Mazo->printCartas();
     } 
 
     public function initPartida(){
-        if (!$this->Partida && $this->Mazo instanceof Mazo && $this->Jugadores instanceof Jugadores){
+        if (!($this->Partida instanceof Partida) && $this->Mazo instanceof Mazo && $this->Jugadores instanceof Jugadores){
             $Partida = new Partida($this->Jugadores, $this->Mazo);
+            $this->Partida = $Partida;
             $this->setSession('Partida', $Partida);
+        }else{
+            $this->Partida->continuePartida( $this->Event );
         }
-        $this->Partida->initMano();
     }
 }
 
