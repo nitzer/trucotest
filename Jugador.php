@@ -25,7 +25,7 @@ class Jugador {
 }
 
 class Jugadores {
-    const CANTIDAD_MAXIMA_JUGADORES = 2;
+    const CANTIDAD_MAXIMA_JUGADORES = 4;
     private $jugadores = array();
     public function __call($name,$arguments){
     }
